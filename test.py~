@@ -227,7 +227,7 @@ if sys.argv[1] == 'stream':
                     + str(sys.argv[4]) + ' ' + dev[i]], shell=True)
             time.sleep(1)
             batch_counter = batch_counter + 1
-
+            
             # start a log for the current device with its given batch
 
             retcode2[i] = subprocess.Popen(['adb -s ' + dev[i] \
