@@ -25,6 +25,13 @@ import re
 import time
 from os import listdir
 import random
+from utils import *
+
+if sys.argv[1] == '-h':
+    print 'Usage:\n TODO'
+    print 'get_uniquecrash.py \n'
+    print 'device_id         - device id\n'
+    sys.exit()
 
 log_file = sys.argv[1]
 new_crashes = {}
@@ -65,33 +72,28 @@ for count in range(0, len(lines)):
 
         cmd = "adb -s " + sys.argv[2] + " push " + path + "/" \
               + filename + " /data/Music"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         #delete the contents of /data/tombstones from the device
 
         cmd = "adb -s " + sys.argv[2] + " " + "shell rm /data/tombstones/*"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         #decode the file on the device
 
         if (sys.argv[3] == "video"):
             cmd = "timeout 15 adb -s " + sys.argv[2] + " " \
                   + "shell stagefright /data/Music/" + filename
-            r = subprocess.Popen([cmd], shell=True)
-            r.wait()
+            subprocess(cmd)
         if (sys.argv[3] == "audio"):
             cmd = "timeout 15 adb -s " + sys.argv[2] + " " \
                   + "shell stagefright -a /data/Music/" + filename
-            r = subprocess.Popen([cmd],  shell=True)
-            r.wait()
+            subprocess(cmd)
 
         #remove the file from the device
 
         cmd = "adb -s " + sys.argv[2] + " " + "shell rm /data/Music/*"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         #use a try-except construction
         #for cases when the file did not generate a tombstone
@@ -105,8 +107,7 @@ for count in range(0, len(lines)):
             tomb_name = "tombstone" + tid
             cmd = "adb -s " + sys.argv[2] + " pull " \
                   + " /data/tombstones/tombstone_00 " + tomb_name
-            r = subprocess.Popen([cmd],  shell=True)
-            r.wait()
+            subprocess(cmd)
 
             #parse the tombstone and check for the last accessed PC address
 
@@ -138,14 +139,12 @@ for count in range(0, len(lines)):
                 #and the file that generated the crash
 
                 cmd = "mkdir issues/" + pc_address
-                r = subprocess.Popen([cmd],  shell=True)
-                r.wait()
+                subprocess(cmd)
 
                 #copy the tombstone in the new issue folder
 
                 cmd = "cp " + tomb_name + " issues/" + pc_address
-                r = subprocess.Popen([cmd],  shell=True)
-                r.wait()
+                subprocess(cmd)
 
                 #save the file that caused the crash in the corresponding issue folder
                 #result: all the files that caused a crash are saved
@@ -157,14 +156,12 @@ for count in range(0, len(lines)):
                 r.wait()
 
                 cmd = "cp " + file_path + " issues/" + pc_address
-                r = subprocess.Popen([cmd], shell=True)
-                r.wait()
+                subprocess(cmd)
 
             #delete the gathered tombstone
 
             cmd = "rm " + tomb_name
-            r = subprocess.Popen([cmd],  shell=True)
-            r.wait()
+            subprocess(cmd)
             f.close()
         except IOError:
             print "The file did not generate a tombstone..false positive"

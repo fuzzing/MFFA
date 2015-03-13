@@ -24,6 +24,7 @@ import sys
 import subprocess
 import re
 import time
+from utils import *
 
 if sys.argv[1] == '-h':
     print '\nUsage:\n'
@@ -37,15 +38,15 @@ if sys.argv[1] == '-h':
     sys.exit()
 
 seed_files = listdir(sys.argv[1])
+root_path = sys.argv[1]
 length = len(seed_files)
 start = int(sys.argv[4])
+device_id = sys.argv[5]
 
 # flush logcat buffer if a new campaign is started
 
 if start == 0:
-    cmd = 'adb -s ' + sys.argv[4] + ' shell rm /data/Movies/*'
-    r = subprocess.Popen([cmd], shell=True)
-    r.wait()
+    flush_log(device_id)
 
 if sys.argv[2] == 'audio':
     for x in range(start, length):
@@ -53,69 +54,61 @@ if sys.argv[2] == 'audio':
 
        # push the file to the device
 
-        cmd = 'adb -s ' + sys.argv[5] + ' push ' + "'" + sys.argv[1] \
+        cmd = 'adb -s ' + device_id + ' push ' + "'" + root_path \
             + '/' + seed_files[x] + "'" + " '/data/Music/" \
             + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
        # log the file being sent to the device
 
-        cmd = 'adb -s ' + sys.argv[5] \
+        cmd = 'adb -s ' + device_id \
             + " shell log -p F -t Stagefright - sp_codec '*** " \
             + str(x) + " - Filename:'" + seed_files[x]
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
        # try to decode audio file
 
-        cmd = 'timeout 15 adb -s ' + sys.argv[5] \
+        cmd = 'timeout 15 adb -s ' + device_id \
             + ' shell codec /data/Music/' + "'" + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         if sys.argv[3] == 'play':
 
             # try to play audio file
-
-            r = subprocess.Popen([cmd], shell=True)
-            r.wait()
+            cmd = 'timeout 15 adb -s ' + device_id \
+                  + ' shell codec -o /data/Music/' + "'" + seed_files[x] + "'"
+            subprocess(cmd)
 
        # remove the file from the device
 
-        cmd = 'adb -s ' + sys.argv[5] + ' shell rm /data/Music/*'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        cmd = 'adb -s ' + device_id + ' shell rm /data/Music/*'
+        subprocess(cmd)
 
 if sys.argv[2] == 'video':
     for x in range(start, length):
         print '***** Sending file: ' + str(x) + ' - ' + seed_files[x]
 
-       # push the file to the device
+        # push the file to the device
 
-        cmd = 'adb -s ' + sys.argv[5] + ' push ' + "'" + sys.argv[1] \
+        cmd = 'adb -s ' + device_id + ' push ' + "'" + root_path \
             + '/' + seed_files[x] + "'" + " '/data/Movies/" \
             + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
-       # log the file being sent to the device
+        # log the file being sent to the device
 
-        cmd = 'adb -s ' + sys.argv[5] \
+        cmd = 'adb -s ' + device_id \
             + " shell log -p F -t Stagefright - sp_codec '*** " \
             + str(x) + " - Filename:'" + seed_files[x]
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
-       # try to decode video and audio streams from video file
+        # try to decode video and audio streams from video file
 
-        cmd = 'timeout 15 adb -s ' + sys.argv[5] \
+        cmd = 'timeout 15 adb -s ' + device_id \
             + ' shell codec /data/Movies/' + seed_files[x]
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
-       # remove the file from the device
+        # remove the file from the device
 
-        cmd = 'adb -s ' + sys.argv[5] + ' shell rm /data/Movies/*'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        cmd = 'adb -s ' + device_id + ' shell rm /data/Movies/*'
+        subprocess(cmd)

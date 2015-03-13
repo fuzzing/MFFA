@@ -24,6 +24,7 @@ import sys
 import subprocess
 import re
 import time
+from utils import *
 
 if sys.argv[1] == '-h':
     print '\nUsage:\n'
@@ -36,13 +37,12 @@ if sys.argv[1] == '-h':
 seed_files = listdir(sys.argv[1])
 length = len(seed_files)
 start = int(sys.argv[2])
+device_id = sys.argv[3]
 
 # flush logcat buffer if a new campaign is started
 
 if start == 0:
-    r = subprocess.Popen(['adb -s ' + sys.argv[3] + ' logcat -c'],
-                         shell=True)
-    r.wait()
+    flush_log(device_id)
 
 for x in range(start, length):
     print '***** Sending file: ' + str(x) + ' - ' + seed_files[x]
@@ -51,26 +51,22 @@ for x in range(start, length):
 
     cmd = 'adb -s ' + sys.argv[3] + ' push ' + "'" + sys.argv[1] + '/' \
         + seed_files[x] + "'" + " '/data/Music/" + seed_files[x] + "'"
-    r = subprocess.Popen([cmd], shell=True)
-    r.wait()
+    subprocess(cmd)
 
     # log the file being sent to the device
 
     cmd = 'adb -s ' + sys.argv[3] \
         + " shell log -p F -t Stagefright - sp_stream '*** " + str(x) \
         + " - Filename:'" + seed_files[x]
-    r = subprocess.Popen([cmd], shell=True)
-    r.wait()
+    subprocess(cmd)
 
     # try to decode audio file
 
     cmd = 'timeout 15 adb -s ' + sys.argv[3] \
         + " shell stream '/data/Music/" + seed_files[x] + "'"
-    r = subprocess.Popen([cmd], shell=True)
-    r.wait()
+    subprocess(cmd)
 
     # remove the file from the device
 
     cmd = 'adb -s ' + sys.argv[3] + ' shell rm /data/Music/*'
-    r = subprocess.Popen([cmd], shell=True)
-    r.wait()
+    subprocess(cmd)

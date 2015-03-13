@@ -23,12 +23,28 @@ import sys
 import subprocess
 import re
 import time
+from utils import *
+
+if sys.argv[1] == '-h':
+    print 'Usage:\n'
+    print 'test.py <type> <audio/video> <play/noplay> <seed_number>\n'
+    print 'type              - type of target (stagefright/sf2/stream/codec)'
+    print 'audio             - seed files are of audio type'
+    print 'video             - seed files are of video type'
+    print 'play/noplay       - enable testing of playback capabilities'
+    print 'seed_number       - number of the seed file to start from\n'
+    print 'Ex: python test.py stagefright video noplay 0\n'
+    sys.exit()
+
+target_type = sys.argv[1]
+format_type = sys.argv[2]
+playback = sys.argv[3]
+seed_number = sys.argv[4]
 
 # get device ids
 
 cmd = 'adb devices > devices.txt'
-r = subprocess.Popen([cmd], shell=True)
-r.wait()
+subprocess(cmd)
 
 # parse the device id file to get the device list
 
@@ -54,9 +70,11 @@ if (count_batches == 0):
     print 'No batches to run'
     print 'Edit the batches.txt file!'
     sys.exit()
+
 if count_batches < count_devices:
     print 'More devices than batches to run...'
     print '...quit now to use all available devices'
+    time.sleep(5)
     print 'continuing...'
 
 dev_batch = [str] * count_devices * count_batches
@@ -73,7 +91,7 @@ for i in range(0, count_devices):
     r = subprocess.Popen([cmd], shell=True)
     r.wait()
 
-if sys.argv[1] == 'stagefright':
+if target_type == 'stagefright':
 
     # each device must take their "share" from the total number of batches
 
@@ -86,8 +104,8 @@ if sys.argv[1] == 'stagefright':
             # give batches[batch_counter] to dev[i] and increment batch_counter
 
             cmd = 'python sp_stagefright.py ' \
-                + str(batches[batch_counter]) + ' ' + str(sys.argv[2]) \
-                + ' ' + str(sys.argv[3]) + ' ' + str(sys.argv[4]) + ' ' \
+                + str(batches[batch_counter]) + ' ' + format_type \
+                + ' ' + playback + ' ' + seed_number + ' ' \
                 + dev[i]
             retcode1[i] = subprocess.Popen([cmd], shell=True)
 
@@ -108,17 +126,14 @@ if sys.argv[1] == 'stagefright':
         # kill the logging processes for the current round
 
         cmd = 'kill -9 $(pgrep -f logcat)'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         # flush the logcat buffer for each device after each round
 
         for i in range(0, count_devices):
-            cmd = 'adb -s ' + dev[i] + ' logcat -c'
-            r = subprocess.Popen([cmd], shell=True)
-            r.wait()
+            flush_log(dev[i])
 
-if sys.argv[1] == 'codec':
+if target_type == 'codec':
 
     # each device must take their "share" from the total number of batches
 
@@ -130,17 +145,18 @@ if sys.argv[1] == 'codec':
 
             # give batches[batch_counter] to dev[i] and increment batch_counter
 
-            retcode1[i] = subprocess.Popen(['python sp_codec.py ' \
-                    + str(batches[batch_counter]) + ' ' \
-                    + str(sys.argv[2]) + ' ' + str(sys.argv[3]) + ' ' \
-                    + str(sys.argv[4]) + ' ' + dev[i]], shell=True)
+            cmd = 'python sp_codec.py ' \
+                  + str(batches[batch_counter]) + ' ' \
+                  + format_type + ' ' + playback + ' ' \
+                  + seed_number + ' ' + dev[i]
+            retcode1[i] = subprocess.Popen([cmd], shell=True)
 
             # start a log for the current device with its given batch
 
-            retcode2[i] = subprocess.Popen(['adb -s ' + dev[i]
-                    + ' logcat -v time *:F > logs/' \
-                    + batches[batch_counter] + '_codec_' \
-                    + str(dev[i])], shell=True)
+            cmd = 'adb -s ' + dev[i] \
+                  + ' logcat -v time *:F > logs/' \
+                  + batches[batch_counter] + '_codec_' + dev[i]
+            retcode2[i] = subprocess.Popen([cmd], shell=True)
             batch_counter = batch_counter + 1
 
         # wait for all devices to finish their round of batches
@@ -153,17 +169,14 @@ if sys.argv[1] == 'codec':
         # kill the logging processes for the current round
 
         cmd = 'kill -9 $(pgrep -f logcat)'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         # flush the logcat buffer for each device after each round
 
         for i in range(0, count_devices):
-            cmd = 'adb -s ' + dev[i] + ' logcat -c'
-            r = subprocess.Popen([cmd], shell=True)
-            r.wait()
+            flush_log(dev[i])
 
-if sys.argv[1] == 'sf2':
+if target_type == 'sf2':
 
     # each device must take their "share" from the total number of batches
 
@@ -175,19 +188,20 @@ if sys.argv[1] == 'sf2':
 
             # give batches[batch_counter] to dev[i] and increment batch_counter
 
-            retcode1[i] = subprocess.Popen(['python sp_sf2.py ' \
-                    + str(batches[batch_counter]) \
-                    + ' ' + str(sys.argv[2]) + ' ' + str(sys.argv[4]) \
-                    + ' ' + dev[i]], shell=True)
-            time.sleep(1)
+            cmd = 'python sp_sf2.py ' \
+                  + str(batches[batch_counter]) \
+                  + ' ' + format_type + ' ' + seed_number \
+                  + ' ' + dev[i]
+            retcode1[i] = subprocess.Popen([cmd], shell=True)
             batch_counter = batch_counter + 1
 
             # start a log for the current device with its given batch
 
-            retcode2[i] = subprocess.Popen(['adb -s ' + dev[i]
-                    + ' logcat -v time *:F > logs/' \
-                    + batches[batch_counter] + '_sf2_' \
-                    + str(dev[i])], shell=True)
+            cmd = 'adb -s ' + dev[i] \
+                  + ' logcat -v time *:F > logs/' \
+                  + batches[batch_counter] + '_sf2_' \
+                  + str(dev[i])
+            retcode2[i] = subprocess.Popen([cmd], shell=True)
             batch_counter = batch_counter + 1
 
         # wait for all devices to finish their round of batches
@@ -200,17 +214,14 @@ if sys.argv[1] == 'sf2':
         # kill the logging processes for the current round
 
         cmd = 'kill -9 $(pgrep -f logcat)'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         # flush the logcat buffer for each device after each round
 
         for i in range(0, count_devices):
-            cmd = 'adb -s ' + dev[i] + ' logcat -c'
-            r = subprocess.Popen([cmd], shell=True)
-            r.wait()
+            flush_log(dev[i])
 
-if sys.argv[1] == 'stream':
+if target_type == 'stream':
 
     # each device must take their "share" from the total number of batches
 
@@ -222,18 +233,19 @@ if sys.argv[1] == 'stream':
 
             # give batches[batch_counter] to dev[i] and increment batch_counter
 
-            retcode1[i] = subprocess.Popen(['python sp_stream.py ' \
-                    + str(batches[batch_counter]) + ' ' \
-                    + str(sys.argv[4]) + ' ' + dev[i]], shell=True)
-            time.sleep(1)
+            cmd = 'python sp_stream.py ' \
+                  + str(batches[batch_counter]) + ' ' \
+                  + seed_number + ' ' + dev[i]
+            retcode1[i] = subprocess.Popen([cmd], shell=True)
             batch_counter = batch_counter + 1
 
             # start a log for the current device with its given batch
 
-            retcode2[i] = subprocess.Popen(['adb -s ' + dev[i] \
-                    + ' logcat -v time *:F > logs/' \
-                    + batches[batch_counter] + '_stream_' \
-                    + str(dev[i])], shell=True)
+            cmd = 'adb -s ' + dev[i] \
+                  + ' logcat -v time *:F > logs/' \
+                  + batches[batch_counter] + '_stream_' \
+                  + str(dev[i])
+            retcode2[i] = subprocess.Popen([cmd], shell=True)
             batch_counter = batch_counter + 1
 
         # wait for all devices to finish their round of batches
@@ -246,12 +258,9 @@ if sys.argv[1] == 'stream':
         # kill the logging processes for the current round
 
         cmd = 'kill -9 $(pgrep -f logcat)'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        subprocess(cmd)
 
         # flush the logcat buffer for each device after each round
 
         for i in range(0, count_devices):
-            cmd = 'adb -s ' + dev[i] + ' logcat -c'
-            r = subprocess.Popen([cmd], shell=True)
-            r.wait()
+            flush_log(dev[i])
