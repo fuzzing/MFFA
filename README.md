@@ -29,3 +29,32 @@ Before starting the actual fuzzing campaign there are several configuration file
 
 1. Firstly, you need to manually run adb devices > devices.txt to populate the devices.txt config file with the ids of the Android devices that will be used during testing
 2. Secondly, you need to write the batches.txt so that it contains the list of the directories containing the fuzzed input media files 
+
+### Running a fuzzing campaign
+
+Having configured these two files you can start the fuzzing campaign by issuing the following command:
+
+```
+ python test.py stagefright <video|audio> <play|noplay> <index>
+    <video|audio> the media batches tested are audio or video files
+    <play|noplay> in case of audio testing, try to also test the playback functionality of the framework or not
+    <index>       in case you stop the fuzzing campaign at a certain index, you can restart from that certain point (for new campaigns use 0)
+```
+
+During the fuzzing process, a separate log will be created for each device in the testing infrastructure. The logs are updated real-time so you can check out partial results during the actual testing. A log template can be observed in the previous logging section.
+
+### Running a bug triage campaign
+
+The triage mechanism will take the generated logs from the actual fuzzing phase, identify the crashing test cases, resend them to the devices, check if the issues have been encountered before and store the unique bugs. Before starting the actual triage process, you need to copy the generated logs to the root directory of the triage scripts. Also you need to populate the logs.txt config file with the file names of the logs, one per each line.
+
+To start the triage process you need to issue the following command:
+
+```
+
+python triage.py <SIGSEGV|SIGILL|SIGFPE|all> <video|audio>
+    <SIGSEGV|SIGILL|SIGFPE|all> - type of signal to look out for
+    <video|audio>               - the media batches that were tested are audio or video files
+```
+
+
+
