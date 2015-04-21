@@ -27,7 +27,7 @@ import re
 import time
 
 
-def subprocess(cmd):
+def run_subproc(cmd):
     r = subprocess.Popen([cmd], shell=True)
     r.wait()
 
