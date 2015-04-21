@@ -28,12 +28,18 @@ import random
 from utils import *
 
 if sys.argv[1] == '-h':
-    print 'Usage:\n TODO'
-    print 'get_uniquecrash.py \n'
-    print 'device_id         - device id\n'
+    print 'Usage:\n '
+    print 'get_uniquecrash.py <log_file> <device_id> <video/audio> <signal_type> '
+    print 'log_file          - assigned log file name'
+    print 'device_id         - id of targeted Android device'
+    print 'video/audio       - type of test files'
+    print 'signal_type       - {SIGSEGV/SIGABRT/SIGFPE/SIGILL} (type of signal to catch) \n'
     sys.exit()
 
 log_file = sys.argv[1]
+device_id = sys.argv[2]
+file_type = sys.argv[3]
+signal_type = sys.argv[4]
 new_crashes = {}
 
 #regexp
@@ -59,7 +65,7 @@ lines = f.readlines()
 for count in range(0, len(lines)):
         for crash_line in range(1, 8):
 
-            if (sys.argv[1] in lines[count]):
+            if (sys.argv[4] in lines[count]):
 
                 #get the filename that caused a crash
 
@@ -70,29 +76,29 @@ for count in range(0, len(lines)):
 
         #push the file to the device
 
-        cmd = "adb -s " + sys.argv[2] + " push " + path + "/" \
+        cmd = "adb -s " + device_id + " push " + path + "/" \
               + filename + " /data/Music"
         subprocess(cmd)
 
         #delete the contents of /data/tombstones from the device
 
-        cmd = "adb -s " + sys.argv[2] + " " + "shell rm /data/tombstones/*"
+        cmd = "adb -s " + device_id + " " + "shell rm /data/tombstones/*"
         subprocess(cmd)
 
         #decode the file on the device
 
-        if (sys.argv[3] == "video"):
-            cmd = "timeout 15 adb -s " + sys.argv[2] + " " \
+        if (file_type == "video"):
+            cmd = "timeout 15 adb -s " + device_id + " " \
                   + "shell stagefright /data/Music/" + filename
             subprocess(cmd)
-        if (sys.argv[3] == "audio"):
-            cmd = "timeout 15 adb -s " + sys.argv[2] + " " \
+        if (file_type == "audio"):
+            cmd = "timeout 15 adb -s " + device_id + " " \
                   + "shell stagefright -a /data/Music/" + filename
             subprocess(cmd)
 
         #remove the file from the device
 
-        cmd = "adb -s " + sys.argv[2] + " " + "shell rm /data/Music/*"
+        cmd = "adb -s " + device_id + " " + "shell rm /data/Music/*"
         subprocess(cmd)
 
         #use a try-except construction
@@ -105,7 +111,7 @@ for count in range(0, len(lines)):
 
             tid = (str)(random.random())
             tomb_name = "tombstone" + tid
-            cmd = "adb -s " + sys.argv[2] + " pull " \
+            cmd = "adb -s " + device_id + " pull " \
                   + " /data/tombstones/tombstone_00 " + tomb_name
             subprocess(cmd)
 

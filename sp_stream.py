@@ -27,8 +27,8 @@ import time
 from utils import *
 
 if sys.argv[1] == '-h':
-    print '\nUsage:\n'
-    print 'sp_stream.py <path_seed_files> <seed_number> <device_id>'
+    print 'Usage:\n'
+    print 'python sp_stream.py <path_seed_files> <seed_number> <device_id>'
     print 'path_seed_files   - path to directory containing the seed files'
     print 'seed_number       - number of the seed file to start from'
     print 'device_id         - device id\n'

@@ -27,7 +27,7 @@ import time
 from utils import *
 
 if sys.argv[1] == '-h':
-    print '\nUsage:\n'
+    print 'Usage:\n'
     print 'codec.py <path_seed_files> <audio/video/list> <play/noplay> <seed_number> <device_id>'
     print 'path_seed_files     - path to directory containing the seed files'
     print 'audio               - seed files are of audio type'
