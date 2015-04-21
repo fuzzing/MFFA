@@ -56,29 +56,25 @@ if sys.argv[2] == 'audio':
         cmd = 'adb -s ' + device_id + ' push ' + "'" + root_path \
             + '/' + seed_files[x] + "'" + " '/data/Music/" \
             + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
         # log the file being sent to the device
 
         cmd = 'adb -s ' + device_id \
             + " shell log -p F -t Stagefright - sp_sf2 '*** " + str(x) \
             + " - Filename:'" + seed_files[x]
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
         # try to decode audio file
 
         cmd = 'timeout 15 adb -s ' + device_id \
             + " shell sf2 -a '/data/Music/" + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
         # remove the file from the device
 
         cmd = 'adb -s ' + device_id + ' shell rm /data/Music/*'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
 if sys.argv[2] == 'video':
     for x in range(start, length):
@@ -89,26 +85,22 @@ if sys.argv[2] == 'video':
         cmd = 'adb -s ' + device_id + ' push ' + "'" + root_path \
             + '/' + seed_files[x] + "'" + " '/data/Movies/" \
             + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
         # log the file being sent to the device
 
         cmd = 'adb -s ' + device_id \
             + " shell log -p F -t Stagefright - sp_sf2 '*** " + str(x) \
             + " - Filename:'" + seed_files[x]
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
         # try to decode video
 
         cmd = 'timeout 15 adb -s ' + device_id \
             + " shell sf2 '/data/Movies/" + seed_files[x] + "'"
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
 
         # remove the file from the device
 
         cmd = 'adb -s ' + device_id + ' shell rm /data/Movies/*'
-        r = subprocess.Popen([cmd], shell=True)
-        r.wait()
+        run_subproc(cmd)
