@@ -1,0 +1,17 @@
+--------- beginning of main
+04-21 07:46:58.834 F/Stagefright(16109): - sp_stagefright *** 0 - Filename:file2 
+04-21 07:46:59.487 F/Stagefright(16125): - sp_stagefright *** 1 - Filename:file4 
+04-21 07:47:00.134 F/Stagefright(16140): - sp_stagefright *** 2 - Filename:file8 
+04-21 07:47:00.781 F/Stagefright(16156): - sp_stagefright *** 3 - Filename:file5 
+04-21 07:47:01.426 F/Stagefright(16171): - sp_stagefright *** 4 - Filename:file1 
+04-21 07:47:01.627 F/stagefright(16172): frameworks/av/cmds/stagefright/stagefright.cpp:1012 CHECK(meta->findCString(kKeyMIMEType, &mime)) failed.
+--------- beginning of crash
+04-21 07:47:01.628 F/libc    (16172): Fatal signal 4 (SIGILL), code 2, fault addr 0xf75d68ad in tid 16172 (stagefright)
+--------- beginning of system
+04-21 07:47:01.996 F/stagefright(16180): frameworks/av/cmds/stagefright/stagefright.cpp:1012 CHECK(meta->findCString(kKeyMIMEType, &mime)) failed.
+04-21 07:47:01.996 F/libc    (16180): Fatal signal 4 (SIGILL), code 2, fault addr 0xf75e48ad in tid 16180 (stagefright)
+04-21 07:47:02.411 F/Stagefright(16195): - sp_stagefright *** 5 - Filename:file3 
+04-21 07:47:03.068 F/Stagefright(16210): - sp_stagefright *** 6 - Filename:file7 
+04-21 07:47:03.719 F/Stagefright(16225): - sp_stagefright *** 7 - Filename:file6 
+04-21 07:47:03.905 F/libc    (16226): Fatal signal 8 (SIGFPE), code 1, fault addr 0xf734df39 in tid 16226 (stagefright)
+04-21 07:47:04.268 F/libc    (16235): Fatal signal 8 (SIGFPE), code 1, fault addr 0xf72f4f39 in tid 16235 (stagefright)

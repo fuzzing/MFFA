@@ -1,0 +1,3 @@
+List of devices attached 
+99EA8E70	device
+
