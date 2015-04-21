@@ -28,20 +28,19 @@ from utils import *
 
 if sys.argv[1] == '-h':
     print 'Usage:\n'
-    print 'codec.py <path_seed_files> <audio/video/list> <play/noplay> <seed_number> <device_id>'
-    print 'path_seed_files     - path to directory containing the seed files'
-    print 'audio               - seed files are of audio type'
-    print 'video               - seed files are of video type'
-    print 'play/noplay         - enable testing of playback capabilities'
-    print 'seed_number         - number of the seed file to start from'
-    print 'device_id           - device id\n'
+    print 'sf2.py <path_seed_files> <audio/video/list> <seed_number> <device_id>'
+    print 'path_seed_files   - path to directory containing the seed files'
+    print 'audio             - seed files are of audio type'
+    print 'video             - seed files are of video type'
+    print 'seed_number       - number of the seed file to start from'
+    print 'device_id         - device id\n'
     sys.exit()
 
 seed_files = listdir(sys.argv[1])
 root_path = sys.argv[1]
 length = len(seed_files)
-start = int(sys.argv[4])
-device_id = sys.argv[5]
+start = int(sys.argv[3])
+device_id = sys.argv[4]
 
 # flush logcat buffer if a new campaign is started
 
@@ -52,37 +51,34 @@ if sys.argv[2] == 'audio':
     for x in range(start, length):
         print '***** Sending file: ' + str(x) + ' - ' + seed_files[x]
 
-       # push the file to the device
+        # push the file to the device
 
         cmd = 'adb -s ' + device_id + ' push ' + "'" + root_path \
             + '/' + seed_files[x] + "'" + " '/data/Music/" \
             + seed_files[x] + "'"
-        run_subproc(cmd)
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
-       # log the file being sent to the device
+        # log the file being sent to the device
 
         cmd = 'adb -s ' + device_id \
-            + " shell log -p F -t Stagefright - sp_codec '*** " \
-            + str(x) + " - Filename:'" + seed_files[x]
-        run_subproc(cmd)
+            + " shell log -p F -t Stagefright - sp_sf2 '*** " + str(x) \
+            + " - Filename:'" + seed_files[x]
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
-       # try to decode audio file
+        # try to decode audio file
 
         cmd = 'timeout 15 adb -s ' + device_id \
-            + ' shell codec /data/Music/' + "'" + seed_files[x] + "'"
-        run_subproc(cmd)
+            + " shell sf2 -a '/data/Music/" + seed_files[x] + "'"
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
-        if sys.argv[3] == 'play':
-
-            # try to play audio file
-            cmd = 'timeout 15 adb -s ' + device_id \
-                  + ' shell codec -o /data/Music/' + "'" + seed_files[x] + "'"
-            run_subproc(cmd)
-
-       # remove the file from the device
+        # remove the file from the device
 
         cmd = 'adb -s ' + device_id + ' shell rm /data/Music/*'
-        run_subproc(cmd)
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
 if sys.argv[2] == 'video':
     for x in range(start, length):
@@ -93,22 +89,26 @@ if sys.argv[2] == 'video':
         cmd = 'adb -s ' + device_id + ' push ' + "'" + root_path \
             + '/' + seed_files[x] + "'" + " '/data/Movies/" \
             + seed_files[x] + "'"
-        run_subproc(cmd)
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
         # log the file being sent to the device
 
         cmd = 'adb -s ' + device_id \
-            + " shell log -p F -t Stagefright - sp_codec '*** " \
-            + str(x) + " - Filename:'" + seed_files[x]
-        run_subproc(cmd)
+            + " shell log -p F -t Stagefright - sp_sf2 '*** " + str(x) \
+            + " - Filename:'" + seed_files[x]
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
-        # try to decode video and audio streams from video file
+        # try to decode video
 
         cmd = 'timeout 15 adb -s ' + device_id \
-            + ' shell codec /data/Movies/' + seed_files[x]
-        run_subproc(cmd)
+            + " shell sf2 '/data/Movies/" + seed_files[x] + "'"
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
 
         # remove the file from the device
 
         cmd = 'adb -s ' + device_id + ' shell rm /data/Movies/*'
-        run_subproc(cmd)
+        r = subprocess.Popen([cmd], shell=True)
+        r.wait()
