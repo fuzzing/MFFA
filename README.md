@@ -41,7 +41,7 @@ Having configured these two files you can start the fuzzing campaign by issuing 
     <index>       in case you stop the fuzzing campaign at a certain index, you can restart from that certain point (for new campaigns use 0)
 ```
 
-During the fuzzing process, a separate log will be created for each device in the testing infrastructure. The logs are updated real-time so you can check out partial results during the actual testing. A log template can be observed in the previous logging section.
+During the fuzzing process, a separate log will be created for each device in the testing infrastructure. The logs are updated real-time so you can check out partial results during the actual testing.
 
 ### Running a bug triage campaign
 
