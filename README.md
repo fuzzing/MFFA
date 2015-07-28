@@ -1,4 +1,4 @@
-# MFFA - Media Fuzzing Framework for Android
+# MFFA - Media Fuzzing Framework for Android (Stagefright fuzzer)
 
 ## Project overview
 
