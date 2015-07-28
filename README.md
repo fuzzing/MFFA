@@ -64,7 +64,7 @@ CVE-2014-7916
 
 CVE-2014-7917
 
-CVE-2015-2832
+CVE-2015-3832
 
 ### Papers, presentations
 
