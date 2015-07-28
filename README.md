@@ -58,17 +58,17 @@ python triage.py <SIGSEGV|SIGILL|SIGFPE|all> <video|audio>
 
 ### Some results
 
-Multiple integer overflows in Stagefright code (libstagefright SampleTable):
+- Multiple integer overflows in Stagefright code (libstagefright SampleTable):
 
-CVE-2014-7915 
+	- CVE-2014-7915 
 
-CVE-2014-7916 
+	- CVE-2014-7916 
 
-CVE-2014-7917
+	- CVE-2014-7917
 
-A crafted MPEG4 media file can result in heap corruption in libstagefright, that can lead to arbitrary code execution in the mediaserver process.
+- A crafted MPEG4 media file can result in heap corruption in libstagefright, that can lead to arbitrary code execution in the mediaserver process:
 
-CVE-2015-3832
+	- CVE-2015-3832
 
 ### Papers, presentations
 
