@@ -56,5 +56,14 @@ python triage.py <SIGSEGV|SIGILL|SIGFPE|all> <video|audio>
     <video|audio>               - the media batches that were tested are audio or video files
 ```
 
+### Some results
 
+CVE-2014-7915 
+CVE-2014-7916 
+CVE-2014-7917
+CVE-2015-2832
+
+### Papers, presentations
+
+Android Builders Summit, March 2015 - http://events.linuxfoundation.org/sites/events/files/slides/ABS2015.pdf 
 
