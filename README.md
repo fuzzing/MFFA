@@ -10,7 +10,7 @@ The tool has been developed to be used inside a Linux environment. At the host s
 
 For the device(s) under test the main problem is including the stagefright command line tool in the Android image that will be flashed on the device(s).
 
-There are two alternatives for achieving this goal:
+There are three alternatives for achieving this goal:
 
  1. if you are building an Android engineering image, you can directly modify the Android.mk file corresponding to the stagefright module. For that you need to go to frameworks/av/cmds/stagefright/ and edit the Android.mk file by looking for the LOCAL_MODULE:=stagefright entry and modifying its corresponding LOCAL_MODULE_TAGS entry from optional to eng. Note that this will NOT work if you are trying to build an user or userdebug Android image.
 ```
