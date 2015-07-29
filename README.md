@@ -12,16 +12,23 @@ For the device(s) under test the main problem is including the stagefright comma
 
 There are two alternatives for achieving this goal:
 
-1. if you are building an Android engineering image, you can directly modify the Android.mk file corresponding to the stagefright module. For that you need to go to frameworks/av/cmds/stagefright/ and edit the Android.mk file by looking for the LOCAL_MODULE:=stagefright entry and modifying its corresponding LOCAL_MODULE_TAGS entry from optional to eng. Note that this will NOT work if you are trying to build an user or userdebug Android image.
+ 1. if you are building an Android engineering image, you can directly modify the Android.mk file corresponding to the stagefright module. For that you need to go to frameworks/av/cmds/stagefright/ and edit the Android.mk file by looking for the LOCAL_MODULE:=stagefright entry and modifying its corresponding LOCAL_MODULE_TAGS entry from optional to eng. Note that this will NOT work if you are trying to build an user or userdebug Android image.
 ```
     #LOCAL_MODULE_TAGS := optional
     LOCAL_MODULE_TAGS := eng
     LOCAL_MODULE:= stagefright
 ```
-2. the second alternative is to go to device/<vendor>/<target_product> and modify the device.mk file by adding the stagefright module to the PRODUCT_PACKAGES entry
+
+ 2. the second alternative is to go to device/<vendor>/<target_product> and modify the device.mk file by adding the stagefright module to the PRODUCT_PACKAGES entry
 ```
     PRODUCT_PACKAGES += \
         stagefright
+```
+
+ 3. Another alternative, and the most straight-forward that doesn't require building the entire image would be to go to the stagefright directory inside the Android tree (frameworks/av/cmds/stagefright) and build only the stagefright module using:
+```
+	mma (or alternatively)
+	mma -B
 ```
 ### Tool configuration
 
