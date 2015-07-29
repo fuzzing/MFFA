@@ -56,7 +56,7 @@ python triage.py <SIGSEGV|SIGILL|SIGFPE|all> <video|audio>
     <video|audio>               - the media batches that were tested are audio or video files
 ```
 
-### Some results
+### Some results - vulnerabilities discovered
 
 - Multiple integer overflows in Stagefright code (libstagefright SampleTable):
 
